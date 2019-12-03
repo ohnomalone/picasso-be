@@ -3,10 +3,9 @@
 module.exports = {
 
   development: {
-    client: 'sqlite3',
-    connection: {
-      filename: './dev.sqlite3'
-    }
+    client: 'pg',
+    connection: 'postgres://localhost/picasso-db',
+    useNullAsDefault: true
   },
 
   staging: {
@@ -43,13 +42,7 @@ module.exports = {
 
   test: {
     client: 'pg',
-    connection: 'postgres://localhost/school_test',
-    migrations: {
-      directory: './db/migrations'
-    },
-    seeds: {
-      directory: './db/seeds/test'
-    },
+    connection: 'postgres://localhost/picasso-db',
     useNullAsDefault: true,
   },
 
