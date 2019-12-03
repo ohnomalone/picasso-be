@@ -5,6 +5,9 @@ module.exports = {
   development: {
     client: 'pg',
     connection: 'postgres://localhost/picasso-db',
+    migrations: {
+      directory: './db/migrations'
+    },
     useNullAsDefault: true
   },
 
@@ -43,6 +46,12 @@ module.exports = {
   test: {
     client: 'pg',
     connection: 'postgres://localhost/picasso-db',
+    migrations: {
+      directory: './db/migrations'
+    },
+    seeds: {
+      directory: './db/seeds/dev'
+    },
     useNullAsDefault: true,
   },
 
