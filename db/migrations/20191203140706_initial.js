@@ -4,7 +4,7 @@ exports.up = function(knex) {
 			table.increments('id').primary();
 			table.string('firstName');
 			table.string('lastName');
-			table.unique('email');
+			table.string('email').unique();
 			table.string('password');
 			table.timestamps(true, true);
 		}),

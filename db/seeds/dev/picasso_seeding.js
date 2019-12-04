@@ -34,7 +34,6 @@ const createUser = (knex, user) => {
 							palette => palette.catalog_id === catalog.id
 						);
 						filteredPalettes.forEach(palette => {
-							console.log(palette);
 							palettesPromises.push(
 								createPalette(knex, {
 									paletteName: palette.paletteName,
