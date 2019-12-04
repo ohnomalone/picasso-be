@@ -8,7 +8,6 @@ exports.up = function(knex) {
           table.string('password');
           table.timestamps(true, true);
         }),
-    
         knex.schema.createTable('catalogs', function(table) {
           table.increments('id').primary();
           table.string('catalogName');
@@ -17,10 +16,9 @@ exports.up = function(knex) {
             .references('users.id');
           table.timestamps(true, true);
         }),
-
         knex.schema.createTable('palettes', function(table) {
             table.increments('id').primary();
-            table.string('palletName');
+            table.string('paletteName');
             table.json('color1');
             table.json('color2');
             table.json('color3');
@@ -33,7 +31,6 @@ exports.up = function(knex) {
           })
       ])
 };
-
 exports.down = function(knex) {
     return Promise.all([
         knex.schema.dropTable('users'),

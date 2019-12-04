@@ -51,4 +51,4 @@ let catalogs = [
 	}
 ];
 
-export default catalogs;
+module.exports = catalogs;

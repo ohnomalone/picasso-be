@@ -201,4 +201,4 @@ let palettes = [
 	}
 ];
 
-export default palettes;
+module.exports = palettes;
