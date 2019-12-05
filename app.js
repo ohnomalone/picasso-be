@@ -17,16 +17,38 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/users/:id/catalogs', async (request, response) => {
-    try{
-        const catalogs = await database('catalogs').where('user_id', request.params.id).select();
-        if (catalogs.length) {
-            response.status(200).json(catalogs);
-        } else { 
-            return response.status(404).send({error: 'Catalogs not found'});
-          }
-    } catch(error) {
-        response.status(500).json({ error });
-      }
-})
+	try {
+		const catalogs = await database('catalogs')
+			.where('user_id', request.params.id)
+			.select();
+		if (catalogs.length) {
+			response.status(200).json(catalogs);
+		} else {
+			return response.status(404).send({ error: 'Catalogs not found' });
+		}
+	} catch (error) {
+		response.status(500).json({ error });
+	}
+});
+
+app.get(
+	'/api/v1/users/:userId/catalogs/:catalogId',
+	async (request, response) => {
+		try {
+			const { catalogId, userId } = request.params;
+			const catalog = await database('catalogs')
+				.where('id', catalogId)
+				.where('user_id', userId)
+				.select();
+			if (catalog.length) {
+				response.status(200).json(catalog);
+			} else {
+				return response.status(404).send({ error: 'Catalog not found' });
+			}
+		} catch (error) {
+			response.status(500).json({ error });
+		}
+	}
+);
 
 export default app;
