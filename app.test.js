@@ -54,11 +54,10 @@ describe('Server', () => {
             
             // Execution
             const response =  await request(app).get(`/api/v1/users/${usersId}/catalogs/${catalogId}/palettes/${paletteId}`)
-            console.log(response.body)
             
             // Expectation
             expect(response.status).toEqual(200)
-            expect(response.body).toEqual(palette)
+            expect(response.body[0].id).toEqual(palette.id)
 
         })
     })

@@ -29,4 +29,19 @@ app.get('/api/v1/users/:usersId/catalogs', async (request, response) => {
       }
 })
 
+app.get('/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId', async (request, response) => {
+    
+    try {
+        const palette = await database('palettes').where('id', request.params.paletteId).select()
+        
+        if (palette.length) {
+            response.status(200).json(palette);
+        }else { 
+            return response.status(404).send({error: 'Cannot get palette'});
+          }
+    } catch(error) {
+        response.status(500).json( error );
+      }
+})
+
 export default app;
