@@ -27,7 +27,7 @@ describe('Server', () => {
             const catalogs = await database('catalogs').where('user_id', id).select();
 
             // Expectation
-            expect(response.status).toEqual(200);
+            expect(response.status).toBe(200);
             expect(response.body.length).toEqual(catalogs.length);
         })
 
@@ -56,7 +56,7 @@ describe('Server', () => {
             const response =  await request(app).get(`/api/v1/users/${usersId}/catalogs/${catalogId}/palettes/${paletteId}`)
             
             // Expectation
-            expect(response.status).toEqual(200)
+            expect(response.status).toBe(200)
             expect(response.body[0].id).toEqual(palette.id)
 
         })
@@ -77,5 +77,61 @@ describe('Server', () => {
         expect(response.status).toBe(404);
         expect(response.body.error).toBe("Cannot get palette")
       });
+
+      describe('POST /api/v1/login', () => {
+          it.only('should be able to return a 200 status and user id and first name if username and poassword match', async () => {
+            // Setup
+            const loginCredentials = {
+                email: "winteriscoming@gmail.com",
+                password: "edwinissagenius"
+            }
+
+            const currentUser = await database('users').where('email', loginCredentials.email).select();
+            const expectedReturn = {
+                firstName: "Quinne",
+                id: `${currentUser.id}`
+            }
+
+            // Execution
+            const response =  await request(app).post('/api/v1/login').send(loginCredentials)
+
+            // Expectation
+            expect(response.status).toBe(200)
+            console.log(response.body, expectedReturn.firstName);
+            
+            expect(response.body.firstName).toEqual(expectedReturn.firstName)
+
+          })
+
+        //   it.only('should be able to return a 400 status and message, "Incorrect Password', async () => {
+        //     // Setup
+        //     const loginCredentials = {
+        //         email: "winteriscoming@gmail.com",
+        //         password: "notCorrectPassword"
+        //     }
+            
+        //     const options = {
+        //         method: 'POST',
+        //         body: JSON.stringify(loginCredentials),
+        //         headers: {
+        //         'Content-Type': 'application/json'
+        //         }
+        //     };
+
+        //     const currentUser = await database('users').where('email', loginCredentials.email).select();
+        //     const expectedReturn = {
+        //         firstName: "Quinne",
+        //         id: `${currentUser.id}`
+        //     }
+
+        //     // Execution
+        //     const response =  await request(app).post('/api/v1/login').send(options)
+
+        //     // Expectation
+        //     expect(response.status).toEqual(400)
+        //     expect(response.body.error).toBe("Incorrect Password")
+        //   })
+      })
+
 
 });
