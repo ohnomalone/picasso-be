@@ -43,7 +43,7 @@ describe('Server', () => {
     })
 
     describe('GET /api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId', () => {
-        it.only('should be able to return a specific palette', async () => {
+        it('should be able to return a specific palette', async () => {
             // SETUP
             const user = await database('users').first();
             const usersId = user.id
@@ -61,5 +61,21 @@ describe('Server', () => {
 
         })
     })
+
+    it('should return a 404 status and the message, "Cannot get palette" - sad path', async () => {
+        // Setup
+        const user = await database('users').first();
+        const usersId = user.id
+        const catalog = await database('catalogs').where('user_id', usersId).select().first()
+        const catalogId = catalog.id
+        const invalidId = -1
+
+        // Execution
+        const response =  await request(app).get(`/api/v1/users/${usersId}/catalogs/${catalogId}/palettes/${invalidId}`)
+
+        // Expectation
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe("Cannot get palette")
+      });
 
 });
