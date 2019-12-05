@@ -25,7 +25,7 @@ app.get('/api/v1/users/:id/catalogs', async (request, response) => {
             return response.status(404).send({error: 'Catalogs not found'});
           }
     } catch(error) {
-        response.status(500).json({ error });
+        response.status(500).json( error );
       }
 })
 

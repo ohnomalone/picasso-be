@@ -28,7 +28,7 @@ describe('Server', () => {
 
             // Expectation
             expect(response.status).toEqual(200);
-            expect(response.body).toEqual(catalogs);
+            expect(response.body.length).toEqual(catalogs.length);
         })
     })
 });
