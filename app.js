@@ -16,13 +16,13 @@ app.get('/', (request, response) => {
 	response.send("We're going to test all the routes!");
 });
 
-app.get('/api/v1/users/:id/catalogs', async (request, response) => {
+app.get('/api/v1/users/:usersId/catalogs', async (request, response) => {
     try{
-        const catalogs = await database('catalogs').where('user_id', request.params.id).select();
+        const catalogs = await database('catalogs').where('user_id', request.params.usersId).select();
         if (catalogs.length) {
             response.status(200).json(catalogs);
         } else { 
-            return response.status(404).send({error: 'Catalogs not found'});
+            return response.status(404).send({error: 'Cannot get Catalogs, User not found'});
           }
     } catch(error) {
         response.status(500).json( error );
