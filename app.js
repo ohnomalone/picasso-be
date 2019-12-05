@@ -93,7 +93,7 @@ app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 });
 
 app.post(
-	'/api/v1/users/:userId/catalogs/:catalogId/:palettes',
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes',
 	async (request, response) => {
 		const newPalette = request.body;
 		for (let requiredParameter of [
