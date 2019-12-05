@@ -79,7 +79,7 @@ describe('Server', () => {
       });
 
       describe('POST /api/v1/login', () => {
-          it.only('should be able to return a 200 status and user id and first name if username and poassword match', async () => {
+          it('should be able to return a 200 status and user id and first name if username and poassword match', async () => {
             // Setup
             const loginCredentials = {
                 email: "winteriscoming@gmail.com",
@@ -103,34 +103,35 @@ describe('Server', () => {
 
           })
 
-        //   it.only('should be able to return a 400 status and message, "Incorrect Password', async () => {
-        //     // Setup
-        //     const loginCredentials = {
-        //         email: "winteriscoming@gmail.com",
-        //         password: "notCorrectPassword"
-        //     }
-            
-        //     const options = {
-        //         method: 'POST',
-        //         body: JSON.stringify(loginCredentials),
-        //         headers: {
-        //         'Content-Type': 'application/json'
-        //         }
-        //     };
+          it('should be able to return a 400 status and message, "Incorrect Password"', async () => {
+            // Setup
+            const loginCredentials = {
+                email: "winteriscoming@gmail.com",
+                password: "notCorrectPassword"
+            }
 
-        //     const currentUser = await database('users').where('email', loginCredentials.email).select();
-        //     const expectedReturn = {
-        //         firstName: "Quinne",
-        //         id: `${currentUser.id}`
-        //     }
+            // Execution
+            const response =  await request(app).post('/api/v1/login').send(loginCredentials)
 
-        //     // Execution
-        //     const response =  await request(app).post('/api/v1/login').send(options)
+            // Expectation
+            expect(response.status).toEqual(404)
+            expect(response.body.error).toBe("Incorrect Password")
+          })
 
-        //     // Expectation
-        //     expect(response.status).toEqual(400)
-        //     expect(response.body.error).toBe("Incorrect Password")
-        //   })
+          it('should be able to return a 400 status and message, "Email not found"', async () => {
+            // Setup
+            const loginCredentials = {
+                email: "emailDoesNotExist@gmail.com",
+                password: "notCorrectPassword"
+            }
+
+            // Execution
+            const response =  await request(app).post('/api/v1/login').send(loginCredentials)
+
+            // Expectation
+            expect(response.status).toEqual(404)
+            expect(response.body.error).toBe("Email not found")
+          })
       })
 
 
