@@ -67,4 +67,65 @@ app.get('/api/v1/catalogs/:catalogId/palettes', async (request, response) => {
 	}
 });
 
+app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
+	const newCatalog = request.body;
+	for (let requiredParameter of ['catalogName', 'user_id']) {
+		if (!newCatalog[requiredParameter]) {
+			return response.status(422).send({
+				error: `Expected format: { catalogName: <string>, user_id: <integer> }. You are missing a ${requiredParameter} property.`
+			});
+		}
+	}
+
+	try {
+		const catalogs = await database('catalogs').insert(newCatalog, 'id');
+
+		if (catalogs.length) {
+			response.status(201).json(catalogs[0]);
+		} else {
+			response
+				.status(404)
+				.send({ error: 'The catalog could not be submitted' });
+		}
+	} catch (error) {
+		response.status(500).json({ error });
+	}
+});
+
+app.post(
+	'/api/v1/users/:userId/catalogs/:catalogId/:palettes',
+	async (request, response) => {
+		const newPalette = request.body;
+		for (let requiredParameter of [
+			'paletteName',
+			'catalog_id',
+			'color1',
+			'color2',
+			'color3',
+			'color4',
+			'color5'
+		]) {
+			if (!newPalette[requiredParameter]) {
+				return response.status(422).send({
+					error: `Expected format: { paletteName: <string>, catalog_id: <integer>, color1: <string>, color2: <string>, color3: <string>, color4: <string>, color5: <string>, }. You are missing a ${requiredParameter} property.`
+				});
+			}
+		}
+
+		try {
+			const palettes = await database('palettes').insert(newPalette, 'id');
+
+			if (palettes.length) {
+				response.status(201).json(palettes[0]);
+			} else {
+				response
+					.status(404)
+					.send({ error: 'The catalog could not be submitted' });
+			}
+		} catch (error) {
+			response.status(500).json({ error });
+		}
+	}
+);
+
 export default app;
