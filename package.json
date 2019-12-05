@@ -1,29 +1,26 @@
 {
-  "name": "picasso-be",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --watchAll"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "babel-jest": "^24.9.0",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "knex": "^0.20.3",
-    "pg": "^7.14.0",
-    "supertest": "^4.0.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.7.4",
-    "@babel/core": "^7.7.4",
-    "@babel/node": "^7.7.4",
-    "@babel/polyfill": "^7.7.0",
-    "@babel/preset-env": "^7.7.4",
-    "jest": "^24.9.0",
-    "nodemon": "^2.0.1"
-  }
+	"name": "picasso-be",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest --watchAll"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@babel/polyfill": "^7.7.0",
+		"@babel/preset-env": "^7.7.4",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"knex": "^0.20.3",
+		"pg": "^7.14.0",
+		"supertest": "^4.0.2"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.7.4",
+		"@babel/core": "^7.7.4",
+		"jest": "^24.9.0"
+	}
 }
