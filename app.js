@@ -51,4 +51,20 @@ app.get(
 	}
 );
 
+app.get('/api/v1/catalogs/:catalogId/palettes', async (request, response) => {
+	try {
+		const { userId, catalogId } = request.params;
+		const palettes = await database('palettes')
+			.where('catalog_id', catalogId)
+			.select();
+		if (palettes.length) {
+			response.status(200).json(palettes);
+		} else {
+			return response.status(404).send({ error: 'No palettes were found' });
+		}
+	} catch (error) {
+		response.status(500).json({ error });
+	}
+});
+
 export default app;
