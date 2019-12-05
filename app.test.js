@@ -114,7 +114,7 @@ describe('Server', () => {
             const response =  await request(app).post('/api/v1/login').send(loginCredentials)
 
             // Expectation
-            expect(response.status).toEqual(404)
+            expect(response.status).toBe(404)
             expect(response.body.error).toBe("Incorrect Password")
           })
 
@@ -129,10 +129,34 @@ describe('Server', () => {
             const response =  await request(app).post('/api/v1/login').send(loginCredentials)
 
             // Expectation
-            expect(response.status).toEqual(404)
+            expect(response.status).toBe(404)
             expect(response.body.error).toBe("Email not found")
           })
       })
+
+      describe('PATCH /api/v1/users/:usersId/catalogs/:catalogId', () => {
+          it.only('should upate the name of a catalog', async () => {
+            // setup
+            const user = await database('users').first();
+            const userId = user.id
+            
+            const catalog = await database('catalogs').where('user_id', userId).first()
+            const catalogId = catalog.id
+            const newName = {newName: "Baby Beluga"}
+            
+            // Execution
+            const response = await request(app).patch(`/api/v1/users/${userId}/catalogs/${catalogId}`).send(newName)
+            console.log(response.status);
+            
+            const result = response.body
+            console.log('result', result);
+            
+            // Expectation
+            // expect(response.status).toBe(200)
+            // expect(result.catalogName).toBe(newName)
+          })
+      })
+
 
 
 });

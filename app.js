@@ -44,7 +44,7 @@ app.get('/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId', async 
       }
 })
 
-app.post('/api/v1/login', async (request, response) => {;
+app.post('/api/v1/login', async (request, response) => {
     try {
         const { email, password } = request.body
         const currentLogin = await database('users').where('email', email).select();
@@ -60,5 +60,21 @@ app.post('/api/v1/login', async (request, response) => {;
         response.status(500).json( error );
       }
 })
+
+app.patch('/api/v1/users/:userId/catalogs/:catalogId', async (request, response) => {
+    try {
+        const { newName } = request.body
+        const catalog = await database('catalogs').where('id', request.params.catalogId);
+        if (catalog.length) {
+            await database('catalogs').where('id', request.params.catalogId).update({ catalogName: newName});
+            return response.status(200).send({ newName });
+        } else { 
+            return response.status(404).send({error: 'Catalog not found - unable to update catalog name'});
+        }
+    } catch(error) {
+        response.status(500).json( error );
+      }
+})
+
 
 export default app;
