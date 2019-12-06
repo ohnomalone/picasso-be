@@ -142,18 +142,18 @@ describe('Server', () => {
             
             const catalog = await database('catalogs').where('user_id', userId).first()
             const catalogId = catalog.id
-            const newName = {newName: "Baby Beluga"}
+            const newName = { newName: "Baby Beluga"}
             
             // Execution
             const response = await request(app).patch(`/api/v1/users/${userId}/catalogs/${catalogId}`).send(newName)
             console.log(response.status);
             
             const result = response.body
-            console.log('result', result);
+            console.log('result', result.newName, newName);
             
             // Expectation
-            // expect(response.status).toBe(200)
-            // expect(result.catalogName).toBe(newName)
+            expect(response.status).toBe(200)
+            expect(result).toEqual(newName)
           })
       })
 
