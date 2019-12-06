@@ -153,7 +153,7 @@ describe('Server', () => {
             expect(result).toEqual(newName)
           })
 
-          it.only('should be able to return a status of 404 when the catalog is not found', async () => {
+          it.skip('should be able to return a status of 404 when the catalog is not found', async () => {
             // setup
             const user = await database('users').first();
             const userId = user.id
