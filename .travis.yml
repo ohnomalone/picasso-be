@@ -1,7 +1,8 @@
 language: node_js
 node_js:
   - "node"
-servies: - postgresql
+servies: 
+  - postgresql
 before_script:
   - psql -c ‘CREATE DATABASE picasso_db;’ -U postgres
-  - knex migrate:latest --env=test
+  # - knex migrate:latest --env=test
