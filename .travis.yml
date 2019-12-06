@@ -6,3 +6,5 @@ services:
 before_script:
   - psql -c 'CREATE DATABASE picasso_db_test;' -U postgres
   - knex migrate:latest --env=test
+git notifications:
+    email: false
