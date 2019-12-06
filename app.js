@@ -16,7 +16,7 @@ app.get('/', (request, response) => {
 	response.send("We're going to test all the routes!");
 });
 
-app.get('https://picasso-database.herokuapp.com/api/v1/users/:usersId/catalogs', async (request, response) => {
+app.get('/api/v1/users/:usersId/catalogs', async (request, response) => {
     try{
         const catalogs = await database('catalogs').where('user_id', request.params.usersId).select();
         if (catalogs.length) {
@@ -29,7 +29,7 @@ app.get('https://picasso-database.herokuapp.com/api/v1/users/:usersId/catalogs',
       }
 })
 
-app.get('https://picasso-database.herokuapp.com/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId', async (request, response) => {
+app.get('/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId', async (request, response) => {
     
     try {
         const palette = await database('palettes').where('id', request.params.paletteId).select()
@@ -44,7 +44,7 @@ app.get('https://picasso-database.herokuapp.com/api/v1/users/:usersId/catalogs/:
       }
 })
 
-app.post('https://picasso-database.herokuapp.com/api/v1/login', async (request, response) => {
+app.post('/api/v1/login', async (request, response) => {
     try {
         const { email, password } = request.body
         const currentLogin = await database('users').where('email', email).select();
@@ -61,7 +61,7 @@ app.post('https://picasso-database.herokuapp.com/api/v1/login', async (request, 
       }
 })
 
-app.patch('https://picasso-database.herokuapp.com/api/v1/users/:userId/catalogs/:catalogId', async (request, response) => {
+app.patch('/api/v1/users/:userId/catalogs/:catalogId', async (request, response) => {
     try {
         const { newName } = request.body
         const catalog = await database('catalogs').where('id', request.params.catalogId);
