@@ -135,7 +135,7 @@ describe('Server', () => {
       })
 
       describe('PATCH /api/v1/users/:usersId/catalogs/:catalogId', () => {
-          it.only('should upate the name of a catalog', async () => {
+          it('should upate the name of a catalog', async () => {
             // setup
             const user = await database('users').first();
             const userId = user.id
@@ -146,14 +146,21 @@ describe('Server', () => {
             
             // Execution
             const response = await request(app).patch(`/api/v1/users/${userId}/catalogs/${catalogId}`).send(newName)
-            console.log(response.status);
-            
             const result = response.body
-            console.log('result', result.newName, newName);
             
             // Expectation
             expect(response.status).toBe(200)
             expect(result).toEqual(newName)
+          })
+
+          it.only('should be able to return a status of 404 when the catalog is not found', async () => {
+            // setup
+            const user = await database('users').first();
+            const userId = user.id
+            const catalogId = -1
+             // Execution
+             const response = await request(app).patch(`/api/v1/users/${userId}/catalogs/${catalogId}`).send(newName)
+           
           })
       })
 
