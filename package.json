@@ -4,9 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest server --ci --forceExit",
-		"start": "node server.js",
-		"test:watch": "jest --watchAll"
+		"start": "nodemon --exec babel-node server.js",
+    	"test": "jest --forceExit",
+    	"test:watch": "jest --watchAll"
 	},
 	"keywords": [],
 	"author": "",
