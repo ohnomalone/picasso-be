@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "jest --watchAll",
-		"start": "nodemon --exec babel-node server.js",
+		"start": "node server.js",
 		"test:watch": "jest --watchAll"
 	},
 	"keywords": [],
