@@ -45,7 +45,7 @@ module.exports = {
 
 	test: {
 		client: 'pg',
-		connection: 'postgres://localhost/picasso_db',
+		connection: 'postgres://localhost/picasso_db_test',
 		migrations: {
 			directory: './db/migrations'
 		},
