@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --watchAll",
+		"test": "jest server --ci --forceExit",
 		"start": "node server.js",
 		"test:watch": "jest --watchAll"
 	},
