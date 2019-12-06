@@ -1,10 +1,15 @@
 language: node_js
 node_js:
-  - "node"
-services: 
-  - postgresql
+- node
+services:
+- postgresql
 before_script:
-  - psql -c 'CREATE DATABASE picasso_db_test;' -U postgres
-  - knex migrate:latest --env=test
-git notifications:
+- psql -c 'CREATE DATABASE picasso_db_test;' -U postgres
+- knex migrate:latest --env=test
+notifications:
   email: false
+deploy:
+  provider: heroku
+  api_key:
+    secure: r9g/CN2W4gx3wMd3tptGD9xNEbpyGHpQt8+UOlG4fyx6zgLgAFG87ii73Czvlgl0c5h88FPGNQS552Vx+wua8KlSylDyUu0AJ4/Mz1m6/aonTxAxl8AsKWGEZ/DSQ7KW5lqnqEvgUQtGyL0+boUBqAIasWxHSHsVaaSwH2GGWQoJuxqJFrGLLXgp0Ksco0wFz/IFBpUzJI+Xs+5Bfrm8d/yL5Rvy8lO0nARrh1VXUj9MEfu2DPIfcWRiT0ImrdEV86eFwaBqIOynxp7olqBMpIjrnaXbTrz7svH+yoMlpMf99LZKqynNrBpY2ohRzXUHWx2LsdbxANBRu0R4tFTZQvBgjyvKBl1EraV01j+80IgjSsU2QhUsZ928lwhu/6LpxTM1hIDG6p0Md/mjh5hU1DDh+7Pcy3RnAKVGUdMEO/EMr4AU8KrX7C3Bc1Vy2TQLc8pmAxqJ9xkxkYf51U/imEoFrCsSTpx4UiuMa7dmnoshgQb4M+hn2UKk8bkHQ0apqt3OkQCJD6xfxIf0GtTgNuYW2rXXRE8P6U5ktjZyQK0dJ5scZtbtWcGUc8u96pH4/0VZk7y7OHJkd/A/nqd3NzUZgJuyKH/VW4g102oB7TUnorBMtTVyepJqintvmGpguqAJ+KuzCxzpQuBh9GWPh4TQZm7HdjNTy7X1FBSFdMo=
+  app: picasso-database
