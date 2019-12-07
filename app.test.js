@@ -306,17 +306,17 @@ describe('Server', () => {
 			// setup
 			const user = await database('users').first();
 			const userId = user.id;
-
-			const catalog = await database('catalogs')
-				.where('user_id', userId)
-				.first();
-			const catalogId = catalog.id;
 			const newName = { newName: 'Baby Beluga' };
+			const catalogId = -1;
 
 			// Execution
 			const response = await request(app)
 				.patch(`/api/v1/users/${userId}/catalogs/${catalogId}`)
-				.send(newName);
+        .send(newName);
+        
+        // Expectation
+      expect(response.status).toBe(404);
+			expect(response.body.error).toBe('Catalog not found - unable to update catalog name');
 		});
 	});
 });
