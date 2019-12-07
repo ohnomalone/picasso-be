@@ -321,7 +321,7 @@ describe('Server', () => {
     it('should be able to return a 201 status and create a new user', async () => {
       // setup
       const newUser  = {
-        firstName: 'Sadie',
+        firstName: 'Sandler',
         lastName: 'McCalsin',
         email: 'SadieMcCaslin@gmail.com',
         password: '123456'
@@ -355,7 +355,7 @@ describe('Server', () => {
       expect(response.body.error.length).toBe(238);
     })
 
-    it.only('should be able to return a 422 status and respond with error message, "The request could not be completed due to email already in use"', async () => {
+    it('should be able to return a 422 status and respond with error message, "The request could not be completed due to email already in use"', async () => {
       // setup
       const existingUser  = {
         firstName: 'Edwin',
@@ -374,6 +374,73 @@ describe('Server', () => {
       expect(response.status).toBe(422);
       expect(response.body.error).toBe("The request could not be completed due to email already in use");
     })
+  })
+
+  describe('GET /api/v1/searchdatabase/?', () => {
+	  it('should return a 200 status and the palette', async () => {
+		// setup
+		const user = await database('users').first();
+		const userId = user.id;
+		const catalog = await database('catalogs')
+			.where('user_id', userId)
+			.first();
+		const catalogId = catalog.id
+		const palette = await database('palettes').where('catalog_id', catalogId).first()
+		const dbToSearch = 'palettes'
+		const id = palette.id
+		
+		
+		// Execution
+		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
+		
+		// Expectation
+		expect(response.status).toBe(200);
+		expect(response.body[0].id).toEqual(palette.id);
+	  })
+
+	  it('should return a 200 status and the catalog', async () => {
+		// setup
+		const user = await database('users').first();
+		const userId = user.id;
+		const catalog = await database('catalogs')
+			.where('user_id', userId)
+			.first();
+		const id = catalog.id
+		const dbToSearch = 'catalogs'
+		
+		// Execution
+		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
+		
+		// Expectation
+		expect(response.status).toBe(200);
+		expect(response.body[0].id).toEqual(catalog.id);
+	  })
+
+	  it('should return a 404 status and the message "catalog not found"', async () => {
+		// setup
+		const id = -1
+		const dbToSearch = 'catalogs'
+		
+		// Execution
+		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
+		
+		// Expectation
+		expect(response.status).toBe(404);
+		expect(response.body.error).toEqual('catalog not found');
+	  })
+
+	  it('should return a 404 status and the message "palette not found"', async () => {
+		// setup
+		const id = -1
+		const dbToSearch = 'palettes'
+		
+		// Execution
+		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
+		
+		// Expectation
+		expect(response.status).toBe(404);
+		expect(response.body.error).toEqual('palette not found');
+	  })
   })
 
 });
