@@ -274,4 +274,20 @@ app.post('/api/v1/users', async (request, response) => {
     }
   });
 
+  app.get('/api/v1/searchdatabase/?', async (request, response) => {
+	  try {
+		  const itemFromDatabase = await database(`${request.query.database}`)
+			.where('id', request.query.id)
+		if (itemFromDatabase.length) {
+			response.status(200).json(itemFromDatabase);
+		} else {
+			let returnWord = request.query.database.split('')
+			returnWord.pop()
+			return response.status(404).send({ error: `${returnWord.join('')} not found` });
+		}
+	  } catch {
+      response.status(500).json({error: '500: Internal Server Error'})
+    }
+  })
+
 export default app;
