@@ -162,7 +162,6 @@ describe('Server', () => {
 				`/api/v1/users/${invalidId}/catalogs`
 			);
 			// Expectation
-			console.log(response.status);
 			expect(response.status).toBe(404);
 			expect(response.body.error).toBe('Catalogs not found');
 		});
@@ -239,8 +238,6 @@ describe('Server', () => {
 
 			// Expectation
 			expect(response.status).toBe(200);
-			console.log(response.body, expectedReturn.firstName);
-
 			expect(response.body.firstName).toEqual(expectedReturn.firstName);
 		});
 
@@ -318,5 +315,45 @@ describe('Server', () => {
       expect(response.status).toBe(404);
 			expect(response.body.error).toBe('Catalog not found - unable to update catalog name');
 		});
-	});
+  });
+  
+  describe('POST /api/v1/users', () => {
+    it('should be able to return a 201 status and create a new user', async () => {
+      // setup
+      const newUser  = {
+        firstName: 'Sadie',
+        lastName: 'McCalsin',
+        email: 'SadieMcCaslin@gmail.com',
+        password: '123456'
+      }
+
+      // Execution
+			const response = await request(app)
+      .post(`/api/v1/users/`)
+      .send(newUser);
+
+      // Expectation
+      expect(response.status).toBe(201);
+      expect(response.body.firstName).toBe(newUser.firstName);
+    })
+
+    it('should be able to return a 422 status and create a new user', async () => {
+      // setup
+      const newUser  = {
+        firstName: 'Sadie',
+        lastName: 'McCalsin',
+        password: '123456'
+      }
+
+      // Execution
+			const response = await request(app)
+      .post(`/api/v1/users/`)
+      .send(newUser);
+
+      // Expectation
+      expect(response.status).toBe(422);
+      expect(response.body.error.length).toBe(238);
+    })
+  })
+
 });

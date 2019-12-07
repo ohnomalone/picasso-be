@@ -238,4 +238,28 @@ app.patch(
 	}
 );
 
+app.post('/api/v1/users', async (request, response) => {
+    const newUser = request.body;
+    
+    for (let requiredParameter of ['firstName', 'lastName', 'email', 'password']) {
+        if (!newUser[requiredParameter]) {
+            return response
+            .status(422)
+            .send({ error: 
+                `Expected format: {
+                    "firstName": <String>,
+                    "lastName": <String>,
+                    "email": <String>,
+                    "password": <String>,
+                }. You're missing a "${requiredParameter}" property.` });
+        }
+    }
+    try {
+      const newAddedUser = await database('users').insert(newUser, 'id')
+      response.status(201).send({firstName: newUser.firstName, id: newAddedUser[0]});
+    } catch {
+      response.status(500).json({error: '500: Internal Server Error'})
+    }
+  });
+
 export default app;
