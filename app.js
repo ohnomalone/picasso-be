@@ -240,7 +240,7 @@ app.patch(
 
 app.post('/api/v1/users', async (request, response) => {
     const newUser = request.body;
-    
+    console.log(newUser);
     for (let requiredParameter of ['firstName', 'lastName', 'email', 'password']) {
         if (!newUser[requiredParameter]) {
             return response
@@ -256,8 +256,9 @@ app.post('/api/v1/users', async (request, response) => {
     }
 
     try { 
-        const emailExists = await database('users').where('email', newUser.email)
-        if(emailExists) {
+		const emailExists = await database('users').where('email', newUser.email)
+		
+        if(emailExists.length) {
             return response
             .status(422)
 			.send({ error: 'The request could not be completed due to email already in use' });
