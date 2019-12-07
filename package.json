@@ -4,25 +4,27 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --watchAll",
-		"start": "nodemon --exec babel-node server.js"
+		"start": "nodemon --exec babel-node server.js",
+		"test": "jest --forceExit",
+		"test:watch": "jest --watchAll"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@babel/cli": "^7.7.4",
+		"@babel/core": "^7.7.4",
 		"@babel/node": "^7.7.4",
 		"@babel/polyfill": "^7.7.0",
 		"@babel/preset-env": "^7.7.4",
 		"cors": "^2.8.5",
 		"express": "^4.17.1",
 		"knex": "^0.20.3",
+		"nodemon": "^2.0.1",
 		"pg": "^7.14.0",
 		"supertest": "^4.0.2"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.7.4",
-		"@babel/core": "^7.7.4",
 		"jest": "^24.9.0"
 	}
 }
