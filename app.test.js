@@ -18,7 +18,7 @@ describe('Server', () => {
 
 	describe('GET /api/v1/users/:id/catalogs', () => {
 		it('should be able to return all the catalogs for a specific user', async () => {
-			// SETUP
+			// Setup
 			const user = await database('users').first();
 			const { id } = user;
 
@@ -26,11 +26,20 @@ describe('Server', () => {
 			const response = await request(app).get(`/api/v1/users/${id}/catalogs`);
 			const catalogs = await database('catalogs')
 				.where('user_id', id)
-				.select();
+				.select()
+				.map(catalog => {
+					const { id, catalogName, user_id } = catalog;
+					return { id, catalogName, user_id };
+				});
+
+			const receivedCatalogs = response.body.map(catalog => {
+				const { id, catalogName, user_id } = catalog;
+				return { id, catalogName, user_id };
+			});
 
 			// Expectation
 			expect(response.status).toEqual(200);
-			expect(response.body).toEqual(catalogs);
+			expect(receivedCatalogs).toEqual(catalogs);
 		});
 	});
 
@@ -44,14 +53,24 @@ describe('Server', () => {
 			const response = await request(app).get(
 				`/api/v1/users/${user_id}/catalogs/${id}`
 			);
+
+			const receivedResponse = response.body.map(catalog => {
+				const { id, catalogName, user_id } = catalog;
+				return { id, catalogName, user_id };
+			});
+
 			const expectedCatalog = await database('catalogs')
 				.where('user_id', user_id)
 				.where('id', id)
-				.select();
+				.select()
+				.map(catalog => {
+					const { id, catalogName, user_id } = catalog;
+					return { id, catalogName, user_id };
+				});
 
 			// Expectation
 			expect(response.status).toEqual(200);
-			expect(response.body).toEqual(expectedCatalog);
+			expect(receivedResponse).toEqual(expectedCatalog);
 		});
 	});
 
@@ -64,12 +83,57 @@ describe('Server', () => {
 				`/api/v1/catalogs/${catalog_id}/palettes`
 			);
 
+			const receivedResponse = response.body.map(catalog => {
+				const {
+					id,
+					paletteName,
+					catalog_id,
+					color1,
+					color2,
+					color3,
+					color4,
+					color5
+				} = catalog;
+				return {
+					id,
+					paletteName,
+					catalog_id,
+					color1,
+					color2,
+					color3,
+					color4,
+					color5
+				};
+			});
+
 			const expectedPalettes = await database('palettes')
 				.where('catalog_id', catalog_id)
-				.select();
+				.select()
+				.map(catalog => {
+					const {
+						id,
+						paletteName,
+						catalog_id,
+						color1,
+						color2,
+						color3,
+						color4,
+						color5
+					} = catalog;
+					return {
+						id,
+						paletteName,
+						catalog_id,
+						color1,
+						color2,
+						color3,
+						color4,
+						color5
+					};
+				});
 
 			expect(response.status).toEqual(200);
-			expect(response.body).toEqual(expectedPalettes);
+			expect(receivedResponse).toEqual(expectedPalettes);
 		});
 	});
 });

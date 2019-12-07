@@ -128,4 +128,51 @@ app.post(
 	}
 );
 
+app.delete(
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
+	async (request, response) => {
+		try {
+			const { catalogId, paletteId } = request.params;
+			const palettes = await database('palettes')
+				// .where('catalog_id', catalogId)
+				.where('id', paletteId)
+				.del();
+
+			if (palettes === 0) {
+				console.log('in');
+				return response.status(204).json(`Palette could not be removed`);
+			}
+
+			response
+				.status(202)
+				.json(`Palette ${paletteId} was successfully removed`);
+		} catch (error) {
+			response.status(500).json({ error });
+		}
+	}
+);
+
+app.patch(
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
+	async (request, response) => {
+		try {
+			const { paletteId } = request.params;
+			const { paletteName } = request.body;
+			const palette = await database('palettes').where('id', paletteId);
+			if (palette.length) {
+				await database('palettes')
+					.where('id', paletteId)
+					.update({ paletteName: paletteName });
+				return response.status(200).send({ paletteName });
+			} else {
+				return response.status(404).send({
+					error: 'Palette not found - unable to update palette color'
+				});
+			}
+		} catch (error) {
+			response.status(500).json(error);
+		}
+	}
+);
+
 export default app;
