@@ -254,6 +254,18 @@ app.post('/api/v1/users', async (request, response) => {
                 }. You're missing a "${requiredParameter}" property.` });
         }
     }
+
+    try { 
+        const emailExists = await database('users').where('email', newUser.email)
+        if(emailExists) {
+            return response
+            .status(422)
+			.send({ error: 'The request could not be completed due to email already in use' });
+        }
+    } catch {
+        response.status(500).json({error: '500: Internal Server Error'})
+      }
+
     try {
       const newAddedUser = await database('users').insert(newUser, 'id')
       response.status(201).send({firstName: newUser.firstName, id: newAddedUser[0]});

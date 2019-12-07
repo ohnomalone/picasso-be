@@ -337,7 +337,7 @@ describe('Server', () => {
       expect(response.body.firstName).toBe(newUser.firstName);
     })
 
-    it('should be able to return a 422 status and create a new user', async () => {
+    it('should be able to return a 422 status and respond with error message', async () => {
       // setup
       const newUser  = {
         firstName: 'Sadie',
@@ -353,6 +353,26 @@ describe('Server', () => {
       // Expectation
       expect(response.status).toBe(422);
       expect(response.body.error.length).toBe(238);
+    })
+
+    it.only('should be able to return a 422 status and respond with error message, "The request could not be completed due to email already in use"', async () => {
+      // setup
+      const existingUser  = {
+        firstName: 'Edwin',
+        lastName: 'Del Bosque',
+        email: 'edwinbosq@gmail.com',
+        password: '123456'
+      }
+
+
+      // Execution
+			const response = await request(app)
+      .post(`/api/v1/users/`)
+      .send(existingUser);
+
+      // Expectation
+      expect(response.status).toBe(422);
+      expect(response.body.error).toBe("The request could not be completed due to email already in use");
     })
   })
 
