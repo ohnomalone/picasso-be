@@ -68,6 +68,106 @@ app.get(
 	}
 );
 
+app.get(
+	'/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId',
+	async (request, response) => {
+		try {
+			const palette = await database('palettes')
+				.where('id', request.params.paletteId)
+				.select();
+
+			if (palette.length) {
+				response.status(200).json(palette);
+			} else {
+				return response.status(404).send({ error: 'Cannot get palette' });
+			}
+		} catch (error) {
+			response.status(500).json(error);
+		}
+	}
+);
+
+app.get('/api/v1/searchdatabase/?', async (request, response) => {
+	try {
+		const itemFromDatabase = await database(`${request.query.database}`).where(
+			'id',
+			request.query.id
+		);
+		if (itemFromDatabase.length) {
+			response.status(200).json(itemFromDatabase);
+		} else {
+			let returnWord = request.query.database.split('');
+			returnWord.pop();
+			return response
+				.status(404)
+				.send({ error: `${returnWord.join('')} not found` });
+		}
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+});
+
+app.post('/api/v1/login', async (request, response) => {
+	try {
+		const { email, password } = request.body;
+		const currentLogin = await database('users')
+			.where('email', email)
+			.select();
+		if (currentLogin.length && password === currentLogin[0].password) {
+			const { firstName, id } = currentLogin[0];
+			return response.status(200).send({ firstName, id });
+		} else if (currentLogin.length) {
+			return response.status(404).send({ error: 'Incorrect Password' });
+		} else {
+			return response.status(404).send({ error: 'Email not found' });
+		}
+	} catch (error) {
+		response.status(500).json(error);
+	}
+});
+
+app.post('/api/v1/users', async (request, response) => {
+	const newUser = request.body;
+	for (let requiredParameter of [
+		'firstName',
+		'lastName',
+		'email',
+		'password'
+	]) {
+		if (!newUser[requiredParameter]) {
+			return response.status(422).send({
+				error: `Expected format: {
+                    "firstName": <String>,
+                    "lastName": <String>,
+                    "email": <String>,
+                    "password": <String>,
+                }. You're missing a "${requiredParameter}" property.`
+			});
+		}
+	}
+
+	try {
+		const emailExists = await database('users').where('email', newUser.email);
+
+		if (emailExists.length) {
+			return response.status(422).send({
+				error: 'The request could not be completed due to email already in use'
+			});
+		}
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+
+	try {
+		const newAddedUser = await database('users').insert(newUser, 'id');
+		response
+			.status(201)
+			.send({ firstName: newUser.firstName, id: newAddedUser[0] });
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+});
+
 app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 	const newCatalog = request.body;
 	for (let requiredParameter of ['catalogName', 'user_id']) {
@@ -131,25 +231,27 @@ app.post(
 	}
 );
 
-app.delete(
-	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
+app.patch(
+	'/api/v1/users/:userId/catalogs/:catalogId',
 	async (request, response) => {
 		try {
-			const { catalogId, paletteId } = request.params;
-			const palettes = await database('palettes')
-				.where('catalog_id', catalogId)
-				.where('id', paletteId)
-				.del();
-
-			if (palettes === 0) {
-				return response.status(204).json(`Palette could not be removed`);
+			const { newName } = request.body;
+			const catalog = await database('catalogs').where(
+				'id',
+				request.params.catalogId
+			);
+			if (catalog.length) {
+				await database('catalogs')
+					.where('id', request.params.catalogId)
+					.update({ catalogName: newName });
+				return response.status(200).send({ newName });
+			} else {
+				return response
+					.status(404)
+					.send({ error: 'Catalog not found - unable to update catalog name' });
 			}
-
-			response
-				.status(202)
-				.json(`Palette ${paletteId} was successfully removed`);
 		} catch (error) {
-			response.status(500).json({ error });
+			response.status(500).json(error);
 		}
 	}
 );
@@ -181,129 +283,27 @@ app.patch(
 	}
 );
 
-app.get(
-	'/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId',
+app.delete(
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
 	async (request, response) => {
 		try {
-			const palette = await database('palettes')
-				.where('id', request.params.paletteId)
-				.select();
+			const { catalogId, paletteId } = request.params;
+			const palettes = await database('palettes')
+				.where('catalog_id', catalogId)
+				.where('id', paletteId)
+				.del();
 
-			if (palette.length) {
-				response.status(200).json(palette);
-			} else {
-				return response.status(404).send({ error: 'Cannot get palette' });
+			if (palettes === 0) {
+				return response.status(204).json(`Palette could not be removed`);
 			}
+
+			response
+				.status(202)
+				.json(`Palette ${paletteId} was successfully removed`);
 		} catch (error) {
-			response.status(500).json(error);
+			response.status(500).json({ error });
 		}
 	}
 );
-
-app.post('/api/v1/login', async (request, response) => {
-	try {
-		const { email, password } = request.body;
-		const currentLogin = await database('users')
-			.where('email', email)
-			.select();
-		if (currentLogin.length && password === currentLogin[0].password) {
-			const { firstName, id } = currentLogin[0];
-			return response.status(200).send({ firstName, id });
-		} else if (currentLogin.length) {
-			return response.status(404).send({ error: 'Incorrect Password' });
-		} else {
-			return response.status(404).send({ error: 'Email not found' });
-		}
-	} catch (error) {
-		response.status(500).json(error);
-	}
-});
-
-app.patch(
-	'/api/v1/users/:userId/catalogs/:catalogId',
-	async (request, response) => {
-		try {
-			const { newName } = request.body;
-			const catalog = await database('catalogs').where(
-				'id',
-				request.params.catalogId
-			);
-			if (catalog.length) {
-				await database('catalogs')
-					.where('id', request.params.catalogId)
-					.update({ catalogName: newName });
-				return response.status(200).send({ newName });
-			} else {
-				return response
-					.status(404)
-					.send({ error: 'Catalog not found - unable to update catalog name' });
-			}
-		} catch (error) {
-			response.status(500).json(error);
-		}
-	}
-);
-
-app.post('/api/v1/users', async (request, response) => {
-	const newUser = request.body;
-	for (let requiredParameter of [
-		'firstName',
-		'lastName',
-		'email',
-		'password'
-	]) {
-		if (!newUser[requiredParameter]) {
-			return response.status(422).send({
-				error: `Expected format: {
-                    "firstName": <String>,
-                    "lastName": <String>,
-                    "email": <String>,
-                    "password": <String>,
-                }. You're missing a "${requiredParameter}" property.`
-			});
-		}
-	}
-
-	try {
-		const emailExists = await database('users').where('email', newUser.email);
-
-		if (emailExists.length) {
-			return response.status(422).send({
-				error: 'The request could not be completed due to email already in use'
-			});
-		}
-	} catch {
-		response.status(500).json({ error: '500: Internal Server Error' });
-	}
-
-	try {
-		const newAddedUser = await database('users').insert(newUser, 'id');
-		response
-			.status(201)
-			.send({ firstName: newUser.firstName, id: newAddedUser[0] });
-	} catch {
-		response.status(500).json({ error: '500: Internal Server Error' });
-	}
-});
-
-app.get('/api/v1/searchdatabase/?', async (request, response) => {
-	try {
-		const itemFromDatabase = await database(`${request.query.database}`).where(
-			'id',
-			request.query.id
-		);
-		if (itemFromDatabase.length) {
-			response.status(200).json(itemFromDatabase);
-		} else {
-			let returnWord = request.query.database.split('');
-			returnWord.pop();
-			return response
-				.status(404)
-				.send({ error: `${returnWord.join('')} not found` });
-		}
-	} catch {
-		response.status(500).json({ error: '500: Internal Server Error' });
-	}
-});
 
 export default app;
