@@ -69,7 +69,7 @@ app.get(
 );
 
 app.get(
-	'/api/v1/users/:usersId/catalogs/:catalogId/palettes/:paletteId',
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
 	async (request, response) => {
 		try {
 			const palette = await database('palettes')
@@ -289,17 +289,55 @@ app.delete(
 		try {
 			const { catalogId, paletteId } = request.params;
 			const palettes = await database('palettes')
-				.where('catalog_id', catalogId)
 				.where('id', paletteId)
+				.where('catalog_id', catalogId)
 				.del();
 
 			if (palettes === 0) {
-				return response.status(204).json(`Palette could not be removed`);
+				return response.status(204).json();
 			}
 
 			response
 				.status(202)
 				.json(`Palette ${paletteId} was successfully removed`);
+		} catch (error) {
+			response.status(500).json({ error });
+		}
+	}
+);
+
+app.delete(
+	'/api/v1/users/:userId/catalogs/:catalogId',
+	async (request, response) => {
+		const { userId, catalogId } = request.params;
+
+		try {
+			const palettes = await database('palettes')
+				.where('catalog_id', catalogId)
+				.del();
+
+			if (palettes === 0) {
+				return response.status(204).json();
+			}
+
+			response.status(202).json(`All palettes were successfully removed`);
+		} catch (error) {
+			response.status(500).json({ error });
+		}
+
+		try {
+			const catalog = await database('catalogs')
+				.where('id', catalogId)
+				.where('user_id', userId)
+				.del();
+
+			if (catalog === 0) {
+				return response.status(204).json();
+			}
+
+			response
+				.status(202)
+				.json(`Catalog ${catalogId} was successfully removed`);
 		} catch (error) {
 			response.status(500).json({ error });
 		}
