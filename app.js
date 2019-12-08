@@ -82,7 +82,8 @@ app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 		const catalogs = await database('catalogs').insert(newCatalog, 'id');
 
 		if (catalogs.length) {
-			response.status(201).json(catalogs[0]);
+			const { catalogName, id } = newCatalog;
+			response.status(201).json({ catalogName, id });
 		} else {
 			response
 				.status(404)
@@ -117,7 +118,8 @@ app.post(
 			const palettes = await database('palettes').insert(newPalette, 'id');
 
 			if (palettes.length) {
-				response.status(201).json(palettes[0]);
+				const { paletteName, id } = newPalette;
+				return response.status(201).send({ paletteName, id });
 			} else {
 				response
 					.status(404)
