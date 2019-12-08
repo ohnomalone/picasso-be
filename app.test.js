@@ -433,6 +433,46 @@ describe('Server', () => {
 		});
 	});
 
+	describe('POST /api/v1/users/:userId/catalogs', () => {
+		it('should be able to return a 201 status and create a new catalog', async () => {
+			// setup
+			const user = await database('users').first();
+			const userId = user.id;
+
+			const newCatalog = {
+				catalogName: 'Something Something',
+				user_id: userId
+			};
+
+			// Execution
+			const response = await request(app)
+				.post(`/api/v1/users/${userId}/catalogs`)
+				.send(newCatalog);
+
+			// Expectation
+			expect(response.status).toBe(201);
+			expect(response.body.catalogName).toBe(newCatalog.catalogName);
+		});
+
+		it('should be able to return a 422 status and respond with error message - sad path', async () => {
+			// setup
+			const newCatalog = {
+				catalogName: 'Something Something'
+			};
+
+			// Execution
+			const response = await request(app)
+				.post(`/api/v1/users/-1/catalogs`)
+				.send(newCatalog);
+
+			// Expectation
+			expect(response.status).toBe(422);
+			expect(response.body.error).toBe(
+				'Expected format: { catalogName: <string>, user_id: <integer> }. You are missing a user_id property.'
+			);
+		});
+	});
+
 	describe('GET /api/v1/searchdatabase/?', () => {
 		it('should return a 200 status and the palette', async () => {
 			// setup
