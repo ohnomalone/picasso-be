@@ -591,53 +591,6 @@ describe('Server', () => {
 		});
 	});
 
-	describe('DELETE /api/v1/users/:userId/catalogs/:catalogId', () => {
-		it('should delete a palette - happy path', async () => {
-			// Setup
-			const user = await database('users').first();
-			const userId = user.id;
-
-			const catalog = await database('catalogs')
-				.where('user_id', userId)
-				.first();
-			const catalogId = catalog.id;
-			console.log(catalogId);
-			console.log(userId);
-
-			// Execution
-			const response = await request(app).delete(
-				`/api/v1/users/${userId}/catalogs/${catalogId}`
-			);
-
-			const result = response.body;
-
-			console.log(result);
-
-			// Expectation
-			expect(response.status).toBe(202);
-			expect(result).toEqual(`Catalog ${paletteId} was successfully removed`);
-		});
-
-		it.skip('should be able to return a status of 404 when the palette is not found - sad path', async () => {
-			// Setup
-			const catalogId = -1;
-
-			const palette = await database('palettes').first();
-			const paletteId = palette.id;
-
-			// Execution
-			const response = await request(app).delete(
-				`/api/v1/users/2345/catalogs/${catalogId}/palettes/${paletteId}`
-			);
-
-			const result = response.body;
-
-			// Expectation
-			expect(response.status).toBe(204);
-			expect(result).toEqual({});
-		});
-	});
-
 	describe('DELETE /api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId', () => {
 		it('should delete a palette - happy path', async () => {
 			// Setup
@@ -671,6 +624,53 @@ describe('Server', () => {
 			// Execution
 			const response = await request(app).delete(
 				`/api/v1/users/2345/catalogs/${catalogId}/palettes/${paletteId}`
+			);
+
+			const result = response.body;
+
+			// Expectation
+			expect(response.status).toBe(204);
+			expect(result).toEqual({});
+		});
+	});
+
+	describe('DELETE /api/v1/users/:userId/catalogs/:catalogId', () => {
+		it('should delete a palette - happy path', async () => {
+			// Setup
+			const user = await database('users').first();
+			const userId = user.id;
+
+			const catalog = await database('catalogs')
+				.where('user_id', userId)
+				.first();
+			const catalogId = catalog.id;
+			console.log(catalogId);
+			console.log(userId);
+
+			// Execution
+			const response = await request(app).delete(
+				`/api/v1/users/${userId}/catalogs/${catalogId}`
+			);
+
+			const result = response.body;
+
+			console.log(result);
+
+			// Expectation
+			expect(response.status).toBe(202);
+			expect(result).toEqual(`Catalog ${catalogId} was successfully removed`);
+		});
+
+		it('should be able to return a status of 404 when the palette is not found - sad path', async () => {
+			// Setup
+			const catalogId = -1;
+
+			const palette = await database('palettes').first();
+			const paletteId = palette.id;
+
+			// Execution
+			const response = await request(app).delete(
+				`/api/v1/users/2345/catalogs/${catalogId}`
 			);
 
 			const result = response.body;
