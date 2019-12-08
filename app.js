@@ -170,7 +170,7 @@ app.patch(
 				return response.status(200).send(newPatch);
 			} else {
 				return response.status(404).send({
-					error: 'Palette not found - unable to update palette color'
+					error: 'Palette not found - unable to update palette'
 				});
 			}
 		} catch (error) {

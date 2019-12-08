@@ -330,6 +330,49 @@ describe('Server', () => {
 		});
 	});
 
+	describe('PATCH /api/v1/users/:usersId/catalogs/:catalogId/palettes/paletteId', () => {
+		it('should upate the name of a palette', async () => {
+			// setup
+			const catalog = await database('catalogs').first();
+			const catalogId = catalog.id;
+
+			const palette = await database('palettes')
+				.where('catalog_id', catalogId)
+				.first();
+			const paletteId = palette.id;
+			const newBatch = { paletteName: 'Jesusmina' };
+
+			// Execution
+			const response = await request(app)
+				.patch(`/api/v1/users/2345/catalogs/${catalogId}/palettes/${paletteId}`)
+				.send(newBatch);
+			const result = response.body;
+
+			// Expectation
+			expect(response.status).toBe(200);
+			expect(result).toEqual(newBatch);
+		});
+
+		it('should be able to return a status of 404 when the palette is not found', async () => {
+			// setup
+			const catalog = await database('catalogs').first();
+			const catalogId = catalog.id;
+			const newBatch = { paletteName: 'Jesusmina' };
+			const invalidId = -1;
+
+			// Execution
+			const response = await request(app)
+				.patch(`/api/v1/users/1234/catalogs/${invalidId}/palettes/${invalidId}`)
+				.send(newBatch);
+
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toBe(
+				'Palette not found - unable to update palette'
+			);
+		});
+	});
+
 	describe('POST /api/v1/users', () => {
 		it('should be able to return a 201 status and create a new user', async () => {
 			// setup
