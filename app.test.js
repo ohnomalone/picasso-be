@@ -467,9 +467,50 @@ describe('Server', () => {
 
 			// Expectation
 			expect(response.status).toBe(422);
-			expect(response.body.error).toBe(
-				'Expected format: { catalogName: <string>, user_id: <integer> }. You are missing a user_id property.'
-			);
+			expect(response.body.error.length).toBe(99);
+		});
+	});
+
+	describe('POST /api/v1/users/:userId/catalogs/:catalogId/palettes', () => {
+		it('should be able to return a 201 status and create a new palette', async () => {
+			// setup
+			const catalog = await database('catalogs').first();
+			const catalogId = catalog.id;
+
+			const newPalette = {
+				paletteName: 'Something Something',
+				color1: JSON.stringify({ hex: '1214312', rbg: '123, 132, 423' }),
+				color2: JSON.stringify({ hex: '1214312', rbg: '123, 132, 423' }),
+				color3: JSON.stringify({ hex: '1214312', rbg: '123, 132, 423' }),
+				color4: JSON.stringify({ hex: '1214312', rbg: '123, 132, 423' }),
+				color5: JSON.stringify({ hex: '1214312', rbg: '123, 132, 423' }),
+				catalog_id: catalogId
+			};
+
+			// Execution
+			const response = await request(app)
+				.post(`/api/v1/users/1234/catalogs/${catalogId}/palettes`)
+				.send(newPalette);
+
+			// Expectation
+			expect(response.status).toBe(201);
+			expect(response.body.paletteName).toBe(newPalette.paletteName);
+		});
+
+		it('should be able to return a 422 status and respond with error message - sad path', async () => {
+			// setup
+			const newPalette = {
+				paletteName: 'Something Something'
+			};
+
+			// Execution
+			const response = await request(app)
+				.post(`/api/v1/users/1234/catalogs/-1/palettes`)
+				.send(newPalette);
+
+			// Expectation
+			expect(response.status).toBe(422);
+			expect(response.body.error.length).toBe(196);
 		});
 	});
 
