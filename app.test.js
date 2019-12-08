@@ -17,7 +17,7 @@ describe('Server', () => {
 	});
 
 	describe('GET /api/v1/users/:id/catalogs', () => {
-		it('should be able to return all the catalogs for a specific user', async () => {
+		it('should be able to return 200 status and all the catalogs for a specific user', async () => {
 			// Setup
 			const user = await database('users').first();
 			const { id } = user;
@@ -41,10 +41,22 @@ describe('Server', () => {
 			expect(response.status).toEqual(200);
 			expect(receivedCatalogs).toEqual(catalogs);
 		});
+
+		it('should return a 404 status and the message, "Catalogs not found" - sad path', async () => {
+			// Setup
+			const invalidId = -1;
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/users/${invalidId}/catalogs`
+			);
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toBe('Catalogs not found');
+		});
 	});
 
 	describe('GET /api/v1/users/:userId/catalogs/:catalogId', () => {
-		it('should be able to return a specific catalog for a specific user', async () => {
+		it('should be able to return a specific catalog for a specific user - happy path', async () => {
 			// SETUP
 			const catalog = await database('catalogs').first();
 			const { user_id, id } = catalog;
@@ -72,15 +84,32 @@ describe('Server', () => {
 			expect(response.status).toEqual(200);
 			expect(receivedResponse).toEqual(expectedCatalog);
 		});
+
+		it('should return a 404 status and the message, "Catalog not found" - sad path', async () => {
+			// Setup
+			const user = await database('users').first();
+			const usersId = user.id;
+			const invalidId = -1;
+
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/users/${usersId}/catalogs/${invalidId}`
+			);
+
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toBe('Catalog not found');
+		});
 	});
 
-	describe('GET /api/v1/catalogs/:catalogId/palettes', () => {
+	describe('GET /api/v1/users/userId/catalogs/:catalogId/palettes', () => {
 		it('should be able to return all the palettes inside a specific catalog', async () => {
 			const palette = await database('palettes').first();
 			const { catalog_id } = palette;
+			const userId = 1;
 
 			const response = await request(app).get(
-				`/api/v1/catalogs/${catalog_id}/palettes`
+				`/api/v1/users/${userId}/catalogs/${catalog_id}/palettes`
 			);
 
 			const receivedResponse = response.body.map(catalog => {
@@ -135,35 +164,17 @@ describe('Server', () => {
 			expect(response.status).toEqual(200);
 			expect(receivedResponse).toEqual(expectedPalettes);
 		});
-	});
 
-	describe('GET /api/v1/users/:id/catalogs', () => {
-		it('should be able to return a 200 status and all the catalogs for a specific user - happy path', async () => {
-			// SETUP
-			const user = await database('users').first();
-			const { id } = user;
-
-			// Execution
-			const response = await request(app).get(`/api/v1/users/${id}/catalogs`);
-			const catalogs = await database('catalogs')
-				.where('user_id', id)
-				.select();
-
-			// Expectation
-			expect(response.status).toBe(200);
-			expect(response.body.length).toEqual(catalogs.length);
-		});
-
-		it('should return a 404 status and the message, "Catalogs not found" - sad path', async () => {
+		it('should return a 404 status and the message, "No palettes were found" - sad path', async () => {
 			// Setup
 			const invalidId = -1;
 			// Execution
 			const response = await request(app).get(
-				`/api/v1/users/${invalidId}/catalogs`
+				`/api/v1/users/${invalidId}/catalogs/${invalidId}/palettes`
 			);
 			// Expectation
 			expect(response.status).toBe(404);
-			expect(response.body.error).toBe('Catalogs not found');
+			expect(response.body.error).toBe('No palettes were found');
 		});
 	});
 
@@ -192,27 +203,27 @@ describe('Server', () => {
 			expect(response.status).toBe(200);
 			expect(response.body[0].id).toEqual(palette.id);
 		});
-	});
 
-	it('should return a 404 status and the message, "Cannot get palette" - sad path', async () => {
-		// Setup
-		const user = await database('users').first();
-		const usersId = user.id;
-		const catalog = await database('catalogs')
-			.where('user_id', usersId)
-			.select()
-			.first();
-		const catalogId = catalog.id;
-		const invalidId = -1;
+		it('should return a 404 status and the message, "Cannot get palette" - sad path', async () => {
+			// Setup
+			const user = await database('users').first();
+			const usersId = user.id;
+			const catalog = await database('catalogs')
+				.where('user_id', usersId)
+				.select()
+				.first();
+			const catalogId = catalog.id;
+			const invalidId = -1;
 
-		// Execution
-		const response = await request(app).get(
-			`/api/v1/users/${usersId}/catalogs/${catalogId}/palettes/${invalidId}`
-		);
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/users/${usersId}/catalogs/${catalogId}/palettes/${invalidId}`
+			);
 
-		// Expectation
-		expect(response.status).toBe(404);
-		expect(response.body.error).toBe('Cannot get palette');
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toBe('Cannot get palette');
+		});
 	});
 
 	describe('POST /api/v1/login', () => {
@@ -309,138 +320,149 @@ describe('Server', () => {
 			// Execution
 			const response = await request(app)
 				.patch(`/api/v1/users/${userId}/catalogs/${catalogId}`)
-        .send(newName);
-        
-        // Expectation
-      expect(response.status).toBe(404);
-			expect(response.body.error).toBe('Catalog not found - unable to update catalog name');
+				.send(newName);
+
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toBe(
+				'Catalog not found - unable to update catalog name'
+			);
 		});
-  });
-  
-  describe('POST /api/v1/users', () => {
-    it('should be able to return a 201 status and create a new user', async () => {
-      // setup
-      const newUser  = {
-        firstName: 'Sandler',
-        lastName: 'McCalsin',
-        email: 'SadieMcCaslin@gmail.com',
-        password: '123456'
-      }
+	});
 
-      // Execution
+	describe('POST /api/v1/users', () => {
+		it('should be able to return a 201 status and create a new user', async () => {
+			// setup
+			const newUser = {
+				firstName: 'Sandler',
+				lastName: 'McCalsin',
+				email: 'SadieMcCaslin@gmail.com',
+				password: '123456'
+			};
+
+			// Execution
 			const response = await request(app)
-      .post(`/api/v1/users/`)
-      .send(newUser);
+				.post(`/api/v1/users/`)
+				.send(newUser);
 
-      // Expectation
-      expect(response.status).toBe(201);
-      expect(response.body.firstName).toBe(newUser.firstName);
-    })
+			// Expectation
+			expect(response.status).toBe(201);
+			expect(response.body.firstName).toBe(newUser.firstName);
+		});
 
-    it('should be able to return a 422 status and respond with error message', async () => {
-      // setup
-      const newUser  = {
-        firstName: 'Sadie',
-        lastName: 'McCalsin',
-        password: '123456'
-      }
+		it('should be able to return a 422 status and respond with error message', async () => {
+			// setup
+			const newUser = {
+				firstName: 'Sadie',
+				lastName: 'McCalsin',
+				password: '123456'
+			};
 
-      // Execution
+			// Execution
 			const response = await request(app)
-      .post(`/api/v1/users/`)
-      .send(newUser);
+				.post(`/api/v1/users/`)
+				.send(newUser);
 
-      // Expectation
-      expect(response.status).toBe(422);
-      expect(response.body.error.length).toBe(238);
-    })
+			// Expectation
+			expect(response.status).toBe(422);
+			expect(response.body.error.length).toBe(238);
+		});
 
-    it('should be able to return a 422 status and respond with error message, "The request could not be completed due to email already in use"', async () => {
-      // setup
-      const existingUser  = {
-        firstName: 'Edwin',
-        lastName: 'Del Bosque',
-        email: 'edwinbosq@gmail.com',
-        password: '123456'
-      }
+		it('should be able to return a 422 status and respond with error message, "The request could not be completed due to email already in use"', async () => {
+			// setup
+			const existingUser = {
+				firstName: 'Edwin',
+				lastName: 'Del Bosque',
+				email: 'edwinbosq@gmail.com',
+				password: '123456'
+			};
 
-
-      // Execution
+			// Execution
 			const response = await request(app)
-      .post(`/api/v1/users/`)
-      .send(existingUser);
+				.post(`/api/v1/users/`)
+				.send(existingUser);
 
-      // Expectation
-      expect(response.status).toBe(422);
-      expect(response.body.error).toBe("The request could not be completed due to email already in use");
-    })
-  })
+			// Expectation
+			expect(response.status).toBe(422);
+			expect(response.body.error).toBe(
+				'The request could not be completed due to email already in use'
+			);
+		});
+	});
 
-  describe('GET /api/v1/searchdatabase/?', () => {
-	  it('should return a 200 status and the palette', async () => {
-		// setup
-		const user = await database('users').first();
-		const userId = user.id;
-		const catalog = await database('catalogs')
-			.where('user_id', userId)
-			.first();
-		const catalogId = catalog.id
-		const palette = await database('palettes').where('catalog_id', catalogId).first()
-		const dbToSearch = 'palettes'
-		const id = palette.id
-		
-		
-		// Execution
-		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
-		
-		// Expectation
-		expect(response.status).toBe(200);
-		expect(response.body[0].id).toEqual(palette.id);
-	  })
+	describe('GET /api/v1/searchdatabase/?', () => {
+		it('should return a 200 status and the palette', async () => {
+			// setup
+			const user = await database('users').first();
+			const userId = user.id;
+			const catalog = await database('catalogs')
+				.where('user_id', userId)
+				.first();
+			const catalogId = catalog.id;
+			const palette = await database('palettes')
+				.where('catalog_id', catalogId)
+				.first();
+			const dbToSearch = 'palettes';
+			const id = palette.id;
 
-	  it('should return a 200 status and the catalog', async () => {
-		// setup
-		const user = await database('users').first();
-		const userId = user.id;
-		const catalog = await database('catalogs')
-			.where('user_id', userId)
-			.first();
-		const id = catalog.id
-		const dbToSearch = 'catalogs'
-		
-		// Execution
-		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
-		
-		// Expectation
-		expect(response.status).toBe(200);
-		expect(response.body[0].id).toEqual(catalog.id);
-	  })
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`
+			);
 
-	  it('should return a 404 status and the message "catalog not found"', async () => {
-		// setup
-		const id = -1
-		const dbToSearch = 'catalogs'
-		
-		// Execution
-		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
-		
-		// Expectation
-		expect(response.status).toBe(404);
-		expect(response.body.error).toEqual('catalog not found');
-	  })
+			// Expectation
+			expect(response.status).toBe(200);
+			expect(response.body[0].id).toEqual(palette.id);
+		});
 
-	  it('should return a 404 status and the message "palette not found"', async () => {
-		// setup
-		const id = -1
-		const dbToSearch = 'palettes'
-		
-		// Execution
-		const response = await request(app).get(`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`);
-		
-		// Expectation
-		expect(response.status).toBe(404);
-		expect(response.body.error).toEqual('palette not found');
-	  })
-  })
+		it('should return a 200 status and the catalog', async () => {
+			// setup
+			const user = await database('users').first();
+			const userId = user.id;
+			const catalog = await database('catalogs')
+				.where('user_id', userId)
+				.first();
+			const id = catalog.id;
+			const dbToSearch = 'catalogs';
 
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`
+			);
+
+			// Expectation
+			expect(response.status).toBe(200);
+			expect(response.body[0].id).toEqual(catalog.id);
+		});
+
+		it('should return a 404 status and the message "catalog not found"', async () => {
+			// setup
+			const id = -1;
+			const dbToSearch = 'catalogs';
+
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`
+			);
+
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toEqual('catalog not found');
+		});
+
+		it('should return a 404 status and the message "palette not found"', async () => {
+			// setup
+			const id = -1;
+			const dbToSearch = 'palettes';
+
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/searchdatabase/?database=${dbToSearch}&id=${id}`
+			);
+
+			// Expectation
+			expect(response.status).toBe(404);
+			expect(response.body.error).toEqual('palette not found');
+		});
+	});
 });

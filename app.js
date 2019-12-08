@@ -10,8 +10,6 @@ app.locals.title = 'picasso palette picker';
 app.use(cors());
 app.use(express.json());
 
-// All endpoints live here
-
 app.get('/', (request, response) => {
 	response.send("We're going to test all the routes!");
 });
@@ -51,21 +49,24 @@ app.get(
 	}
 );
 
-app.get('/api/v1/catalogs/:catalogId/palettes', async (request, response) => {
-	try {
-		const { userId, catalogId } = request.params;
-		const palettes = await database('palettes')
-			.where('catalog_id', catalogId)
-			.select();
-		if (palettes.length) {
-			response.status(200).json(palettes);
-		} else {
-			return response.status(404).send({ error: 'No palettes were found' });
+app.get(
+	'/api/v1/users/:userId/catalogs/:catalogId/palettes',
+	async (request, response) => {
+		try {
+			const { catalogId } = request.params;
+			const palettes = await database('palettes')
+				.where('catalog_id', catalogId)
+				.select();
+			if (palettes.length) {
+				response.status(200).json(palettes);
+			} else {
+				return response.status(404).send({ error: 'No palettes were found' });
+			}
+		} catch (error) {
+			response.status(500).json({ error });
 		}
-	} catch (error) {
-		response.status(500).json({ error });
 	}
-});
+);
 
 app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 	const newCatalog = request.body;
@@ -152,18 +153,53 @@ app.delete(
 	}
 );
 
+// app.put(
+// 	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
+// 	async (request, response) => {
+// 		try {
+// 			const { paletteId } = request.params;
+// 			const {
+// 				paletteName,
+// 				color1,
+// 				color2,
+// 				color3,
+// 				color4,
+// 				color5,
+// 				catalog_id
+// 			} = request.body;
+// 			const palette = await database('palettes').where('id', paletteId);
+// 			if (palette.length) {
+// 				await database('palettes')
+// 					.where('id', paletteId)
+// 					.update({ paletteName: paletteName });
+// 				return response.status(200).send({ paletteName });
+// 			} else {
+// 				return response.status(404).send({
+// 					error: 'Palette not found - unable to update palette color'
+// 				});
+// 			}
+// 		} catch (error) {
+// 			response.status(500).json(error);
+// 		}
+// 	}
+// );
+
 app.patch(
 	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
 	async (request, response) => {
 		try {
-			const { paletteId } = request.params;
-			const { paletteName } = request.body;
-			const palette = await database('palettes').where('id', paletteId);
+			const { catalogId, paletteId } = request.params;
+			const newPatch = request.body;
+			const palette = await database('palettes')
+				.where('id', paletteId)
+				.where('catalog_id', catalogId);
+
 			if (palette.length) {
 				await database('palettes')
 					.where('id', paletteId)
-					.update({ paletteName: paletteName });
-				return response.status(200).send({ paletteName });
+					.where('catalog_id', catalogId)
+					.update(newPatch);
+				return response.status(200).send(newPatch);
 			} else {
 				return response.status(404).send({
 					error: 'Palette not found - unable to update palette color'
@@ -239,56 +275,66 @@ app.patch(
 );
 
 app.post('/api/v1/users', async (request, response) => {
-    const newUser = request.body;
-    console.log(newUser);
-    for (let requiredParameter of ['firstName', 'lastName', 'email', 'password']) {
-        if (!newUser[requiredParameter]) {
-            return response
-            .status(422)
-            .send({ error: 
-                `Expected format: {
+	const newUser = request.body;
+	console.log(newUser);
+	for (let requiredParameter of [
+		'firstName',
+		'lastName',
+		'email',
+		'password'
+	]) {
+		if (!newUser[requiredParameter]) {
+			return response.status(422).send({
+				error: `Expected format: {
                     "firstName": <String>,
                     "lastName": <String>,
                     "email": <String>,
                     "password": <String>,
-                }. You're missing a "${requiredParameter}" property.` });
-        }
-    }
+                }. You're missing a "${requiredParameter}" property.`
+			});
+		}
+	}
 
-    try { 
-		const emailExists = await database('users').where('email', newUser.email)
-		
-        if(emailExists.length) {
-            return response
-            .status(422)
-			.send({ error: 'The request could not be completed due to email already in use' });
-        }
-    } catch {
-        response.status(500).json({error: '500: Internal Server Error'})
-      }
+	try {
+		const emailExists = await database('users').where('email', newUser.email);
 
-    try {
-      const newAddedUser = await database('users').insert(newUser, 'id')
-      response.status(201).send({firstName: newUser.firstName, id: newAddedUser[0]});
-    } catch {
-      response.status(500).json({error: '500: Internal Server Error'})
-    }
-  });
+		if (emailExists.length) {
+			return response.status(422).send({
+				error: 'The request could not be completed due to email already in use'
+			});
+		}
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
 
-  app.get('/api/v1/searchdatabase/?', async (request, response) => {
-	  try {
-		  const itemFromDatabase = await database(`${request.query.database}`)
-			.where('id', request.query.id)
+	try {
+		const newAddedUser = await database('users').insert(newUser, 'id');
+		response
+			.status(201)
+			.send({ firstName: newUser.firstName, id: newAddedUser[0] });
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+});
+
+app.get('/api/v1/searchdatabase/?', async (request, response) => {
+	try {
+		const itemFromDatabase = await database(`${request.query.database}`).where(
+			'id',
+			request.query.id
+		);
 		if (itemFromDatabase.length) {
 			response.status(200).json(itemFromDatabase);
 		} else {
-			let returnWord = request.query.database.split('')
-			returnWord.pop()
-			return response.status(404).send({ error: `${returnWord.join('')} not found` });
+			let returnWord = request.query.database.split('');
+			returnWord.pop();
+			return response
+				.status(404)
+				.send({ error: `${returnWord.join('')} not found` });
 		}
-	  } catch {
-      response.status(500).json({error: '500: Internal Server Error'})
-    }
-  })
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+});
 
 export default app;
