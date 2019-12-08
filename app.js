@@ -135,12 +135,11 @@ app.delete(
 		try {
 			const { catalogId, paletteId } = request.params;
 			const palettes = await database('palettes')
-				// .where('catalog_id', catalogId)
+				.where('catalog_id', catalogId)
 				.where('id', paletteId)
 				.del();
 
 			if (palettes === 0) {
-				console.log('in');
 				return response.status(204).json(`Palette could not be removed`);
 			}
 
@@ -152,37 +151,6 @@ app.delete(
 		}
 	}
 );
-
-// app.put(
-// 	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
-// 	async (request, response) => {
-// 		try {
-// 			const { paletteId } = request.params;
-// 			const {
-// 				paletteName,
-// 				color1,
-// 				color2,
-// 				color3,
-// 				color4,
-// 				color5,
-// 				catalog_id
-// 			} = request.body;
-// 			const palette = await database('palettes').where('id', paletteId);
-// 			if (palette.length) {
-// 				await database('palettes')
-// 					.where('id', paletteId)
-// 					.update({ paletteName: paletteName });
-// 				return response.status(200).send({ paletteName });
-// 			} else {
-// 				return response.status(404).send({
-// 					error: 'Palette not found - unable to update palette color'
-// 				});
-// 			}
-// 		} catch (error) {
-// 			response.status(500).json(error);
-// 		}
-// 	}
-// );
 
 app.patch(
 	'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId',
@@ -276,7 +244,6 @@ app.patch(
 
 app.post('/api/v1/users', async (request, response) => {
 	const newUser = request.body;
-	console.log(newUser);
 	for (let requiredParameter of [
 		'firstName',
 		'lastName',
