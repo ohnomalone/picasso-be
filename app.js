@@ -312,20 +312,9 @@ app.delete(
 		const { userId, catalogId } = request.params;
 
 		try {
-			const palettes = await database('palettes')
+			await database('palettes')
 				.where('catalog_id', catalogId)
 				.del();
-
-			if (palettes === 0) {
-				return response.status(204).json();
-			}
-
-			response.status(202).json(`All palettes were successfully removed`);
-		} catch (error) {
-			response.status(500).json({ error });
-		}
-
-		try {
 			const catalog = await database('catalogs')
 				.where('id', catalogId)
 				.where('user_id', userId)
