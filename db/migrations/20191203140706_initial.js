@@ -18,11 +18,7 @@ exports.up = function(knex) {
 		knex.schema.createTable('palettes', function(table) {
 			table.increments('id').primary();
 			table.string('paletteName');
-			table.json('color1');
-			table.json('color2');
-			table.json('color3');
-			table.json('color4');
-			table.json('color5');
+			table.json('colors');
 			table.integer('catalog_id').unsigned();
 			table.foreign('catalog_id').references('catalogs.id');
 			table.timestamps(true, true);
