@@ -198,8 +198,6 @@ app.post(
 	'/api/v1/users/:userId/catalogs/:catalogId/palettes',
 	async (request, response) => {
 		const newPalette = request.body;
-		console.log(newPalette);
-		
 		
 		for (let requiredParameter of [
 			'paletteName',
@@ -207,33 +205,23 @@ app.post(
 			'colors'
 		]) {
 			if (!newPalette[requiredParameter]) {
-				console.log('requiredParameter');
 				return response.status(422).send({
 					error: `Expected format: { paletteName: <string>, catalog_id: <integer>, colors: <array of objects> }. You are missing a ${requiredParameter} property.`
 				});
 			}
 		}
-console.log('PASSES REQUIRED PERAMS!!');
 
 		try {
 			const palettes = await database('palettes').insert(newPalette, 'id');
-			console.log('palettes', palettes);
-
 			if (palettes.length) {
-				console.log('return successful!!');
-				
 				const { paletteName, id } = newPalette;
 				return response.status(201).send({ paletteName, id });
 			} else {
-				console.log('return UNsuccessful!! 404 catalog could not be submitted');
-
 				response
 					.status(404)
 					.send({ error: 'The catalog could not be submitted' });
 			}
 		} catch (error) {
-			console.log('return UNsuccessful!! 500 catalog could not be submitted');
-
 			response.status(500).json({ error });
 		}
 	}

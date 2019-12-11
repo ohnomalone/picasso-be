@@ -348,7 +348,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 1
 	},
 	{
@@ -700,7 +700,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 3
 	},
 	{
@@ -1052,7 +1052,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 2
 	},
 	{
@@ -1404,7 +1404,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 1
 	},
 	{
@@ -1756,7 +1756,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 4
 	},
 	{
@@ -2108,7 +2108,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 5
 	},
 	{
@@ -2460,7 +2460,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 6
 	},
 	{
@@ -2812,7 +2812,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 7
 	},
 	{
@@ -3164,7 +3164,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 7
 	},
 	{
@@ -3516,7 +3516,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 8
 	},
 	{
@@ -3868,7 +3868,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 9
 	},
 	{
@@ -4220,7 +4220,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -4572,7 +4572,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -4924,7 +4924,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 3
 	},
 	{
@@ -5276,7 +5276,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 5
 	},
 	{
@@ -5628,7 +5628,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -5980,7 +5980,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -6332,7 +6332,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -6684,7 +6684,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 10
 	},
 	{
@@ -7036,7 +7036,7 @@ let palettes = [
       "distance": 801
     }
   }
-]
+],
 		catalog_id: 3
 	}
 ];

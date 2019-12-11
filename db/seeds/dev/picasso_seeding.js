@@ -37,11 +37,7 @@ const createUser = (knex, user) => {
 							palettesPromises.push(
 								createPalette(knex, {
 									paletteName: palette.paletteName,
-									color1: JSON.stringify(palette.color1),
-									color2: JSON.stringify(palette.color2),
-									color3: JSON.stringify(palette.color3),
-									color4: JSON.stringify(palette.color4),
-									color5: JSON.stringify(palette.color5),
+									colors: JSON.stringify(palette.colors),
 									catalog_id: catalogId[0]
 								})
 							);

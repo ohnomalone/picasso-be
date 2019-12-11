@@ -463,12 +463,10 @@ describe('Server', () => {
 	});
 
 	describe('POST /api/v1/users/:userId/catalogs/:catalogId/palettes', () => {
-		it.only('should be able to return a 201 status and create a new palette - happy path', async () => {
+		it('should be able to return a 201 status and create a new palette - happy path', async () => {
 			// Setup
 			const catalog = await database('catalogs').first();
 			const catalogId = catalog.id;
-			console.log(catalogId);
-			
 
 			const newPalette = {
 				paletteName: 'Something Something',
@@ -828,8 +826,8 @@ describe('Server', () => {
 				.send(newPalette);
 
 			// Expectation
-			// expect(response.status).toBe(201);
-			// expect(response.body.paletteName).toBe(newPalette.paletteName);
+			expect(response.status).toBe(201);
+			expect(response.body.paletteName).toBe(newPalette.paletteName);
 		});
 
 		it('should be able to return a 422 status and respond with error message - sad path', async () => {
@@ -845,7 +843,8 @@ describe('Server', () => {
 
 			// Expectation
 			expect(response.status).toBe(422);
-			expect(response.body.error.length).toBe(196);
+			console.log(response.body.error)
+			expect(response.body.error).toBe("Expected format: { paletteName: <string>, catalog_id: <integer>, colors: <array of objects> }. You are missing a catalog_id property.");
 		});
 	});
 
