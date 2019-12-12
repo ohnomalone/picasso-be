@@ -3,8 +3,8 @@
 By:
 [Matthew Malone](https://github.com/matthewdshepherd) & [Edwin Del Bosque](https://github.com/edwindelbosque)
 
-## [Colors By Picasso - Production Site](http://colorsbypicasso.herokuapp.com/)
-## [Colors By Picasso - Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
+### [Colors By Picasso - Production Site](http://colorsbypicasso.herokuapp.com/)
+### [Colors By Picasso - Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
 
 ## Table of Contents
 * [Schema](#Schema)
@@ -12,6 +12,7 @@ By:
 * GET Endpoints
 * POST Endpoints
 * DELETE Endpoints
+* PATCH Endpoints
 * [API's used](#API's-used)
 * [Project Management Board](#Project-Management-Board)
 
