@@ -107,6 +107,29 @@ app.get('/api/v1/searchdatabase/?', async (request, response) => {
 	}
 });
 
+app.get('/api/v1/users/:userId/palettes', async (request, response) => {
+	const { userId } = request.params;
+	try {
+		const catalogs = await database('catalogs').where('user_id', userId)
+		const allReducedPalettes = await catalogs.reduce( async (acc, catalog) => {
+			acc = []
+			const palettes = await database('palettes').where('catalog_id', catalog.id)
+			acc.push(...palettes)
+			return acc
+		}, [])
+
+		if (allReducedPalettes.length) {
+			response.status(200).json(allReducedPalettes);
+		} else {
+			return response
+				.status(404)
+				.send({ error: `No Palettes found with api /api/v1/users/:userId/palettes` });
+		}
+	} catch {
+		response.status(500).json({ error: '500: Internal Server Error' });
+	}
+});
+
 app.post('/api/v1/login', async (request, response) => {
 	try {
 		const { email, password } = request.body;
