@@ -220,6 +220,7 @@ Format of POST body:
 </details>
 <details>
   <summary> <code>DELETE</code> endpoints </summary>
+
 ##### 1. DELETE A Specific Palette
 DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
 - this only requires the id of the Palette you want to delete
