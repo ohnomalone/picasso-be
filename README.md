@@ -49,7 +49,7 @@ One Catalog has many Palettes.
 	}]
   ```
 </details>
-</details>
+<details>
   <summary>  Palette's Info Object Examples  </summary>
 
   ```js
@@ -219,6 +219,8 @@ Format of POST body:
 { error: Incorrect Password' }
 ```
 </details>
+<details>
+  <summary> <code>DELETE</code> endpoints </summary>
 
 ##### 1. DELETE A Specific Palette
 DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
