@@ -205,13 +205,11 @@ app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 			});
 		}
 	}
-
 	try {
 		const catalogs = await database('catalogs').insert(newCatalog, 'id');
-
 		if (catalogs.length) {
-			const { catalogName, id } = catalogs;
-			response.status(201).send({ catalogName, id });
+			const { catalogName } = newCatalog;
+			response.status(201).send({ catalogName, id: catalogs[0] });
 		} else {
 			response
 				.status(404)
@@ -222,11 +220,8 @@ app.post('/api/v1/users/:userId/catalogs', async (request, response) => {
 	}
 });
 
-app.post(
-	'/api/v1/users/:userId/catalogs/:catalogId/palettes',
-	async (request, response) => {
+app.post('/api/v1/users/:userId/catalogs/:catalogId/palettes', async (request, response) => {
 		const newPalette = request.body;
-		
 		for (let requiredParameter of [
 			'paletteName',
 			'catalog_id',
@@ -242,8 +237,8 @@ app.post(
 		try {
 			const palettes = await database('palettes').insert(newPalette, 'id');
 			if (palettes.length) {
-				const { paletteName, id } = palettes;
-				return response.status(201).send({ paletteName, id });
+				const { paletteName } = newPalette;
+				return response.status(201).send({ paletteName, id: palettes[0] });
 			} else {
 				response
 					.status(404)
