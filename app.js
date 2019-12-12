@@ -112,9 +112,14 @@ app.get('/api/v1/users/:userId/palettes', async (request, response) => {
 	try {
 		const catalogs = await database('catalogs').where('user_id', userId)
 		const allReducedPalettes = await catalogs.reduce( async (acc, catalog) => {
-			acc = []
-			const palettes = await database('palettes').where('catalog_id', catalog.id)
-			acc.push(...palettes)
+			if (!acc.length) {
+				acc = []
+				const palettes = await database('palettes').where('catalog_id', catalog.id)
+				acc = [...palettes]
+			} else {
+				const palettes = await database('palettes').where('catalog_id', catalog.id)
+				acc = [...acc, ...palettes]
+			}
 			return acc
 		}, [])
 
