@@ -226,10 +226,37 @@ Format of POST body:
 
 ##### 1. DELETE A Specific Palette
 DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
-- this only requires the id of the Palette you want to delete
+- This only requires the id of the Palette you want to delete
 - Sample Response (ok) status: 201 with message
 ```js
 `Palette <catalogId> was successfully removed`
+```
+##### 2. DELETE A Specific Catalog and Palettes it holds
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId'
+- This only requires the id of the Catalog you want to delete
+- Sample Response (ok) status: 201 with message
+```js
+`Catalog <catalogId> was successfully removed`
+```
+</details>
+<details>
+  <summary> <code>PATCH</code> endpoints </summary>
+
+##### 1. PATCH A Specific Palette
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
+- This requires the id of the Palette you want to patch
+- Body needs to hold the part of the Palette to update
+- Sample Response (ok) status: 20 with new name
+```js
+{newName: <name of palette>}
+```
+##### 2. PATCH A Specific Catalog
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId'
+- This only requires the id of the Catalog you want to patch
+- Body needs to hold the part of the Catalog to update
+- Sample Response (ok) status: 201 with message
+```js
+{newName: <name of catalog>}
 ```
 </details>
 
