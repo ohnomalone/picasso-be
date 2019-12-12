@@ -3,7 +3,7 @@
 By:
 [Matthew Malone](https://github.com/matthewdshepherd) & [Edwin Del Bosque](https://github.com/edwindelbosque)
 
-## [Colors By Picasso - Front End](https://matthewdshepherd.github.io/whalewatchers/)
+## [Colors By Picasso - Front End](https://github.com/edwindelbosque/picasso-fe)
 
 ## Table of Contents
 * [Schema](#Schema)
@@ -48,7 +48,7 @@ One Catalog has many Palettes.
 	}]
   ```
 </details>
-</details>
+<details>
   <summary>  Palette's Info Object Examples  </summary>
 
   ```js
@@ -218,7 +218,8 @@ Format of POST body:
 { error: Incorrect Password' }
 ```
 </details>
-
+<details>
+  <summary> <code>DELETE</code> endpoints </summary>
 ##### 1. DELETE A Specific Palette
 DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
 - this only requires the id of the Palette you want to delete
