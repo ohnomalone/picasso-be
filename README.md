@@ -3,8 +3,8 @@
 By:
 [Matthew Malone](https://github.com/matthewdshepherd) & [Edwin Del Bosque](https://github.com/edwindelbosque)
 
-### [Colors By Picasso - Production Site](http://colorsbypicasso.herokuapp.com/)
-### [Colors By Picasso - Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
+## [Production Site](http://colorsbypicasso.herokuapp.com/)
+## [Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
 
 ## Table of Contents
 * [Schema](#Schema)
