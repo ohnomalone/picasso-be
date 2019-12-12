@@ -34,6 +34,7 @@ One Catalog has many Palettes.
 	}
   ```
 </details>
+<details>
   <summary>  Catalog's Info Object Examples  </summary>
 
   ```js
@@ -67,6 +68,7 @@ One Catalog has many Palettes.
     }]
   ```
 </details>
+
 ## End Points
 <details>
   <summary> <code>GET</code> endpoints </summary>
