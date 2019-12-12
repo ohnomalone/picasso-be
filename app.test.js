@@ -227,6 +227,32 @@ describe('Server', () => {
 		});
 	});
 
+	describe('GET /api/v1/users/:userId/palettes', () => {
+		it('should return a 200 status and all the palettes', async () => {
+			// Setup
+			const user = await database('users').first();
+			const userId = user.id;
+			console.log('userid', userId, user);
+			
+			const catalogs = await database('catalogs').where('user_id', userId)
+			const allReducedPalettes = await catalogs.reduce( async (acc, catalog) => {
+				acc = []
+				const palettes = await database('palettes').where('catalog_id', catalog.id)
+				acc.push(...palettes)
+				return acc
+			}, [])
+
+			// Execution
+			const response = await request(app).get(
+				`/api/v1/users/${userId}/palettes`
+			);
+			
+			// Expectation
+			expect(response.status).toBe(200);
+			expect(response.body.length).toEqual(allReducedPalettes.length);
+		});
+	})
+
 	describe('GET /api/v1/searchdatabase/?', () => {
 		it('should return a 200 status and the palette - happy path', async () => {
 			// Setup
@@ -843,7 +869,6 @@ describe('Server', () => {
 
 			// Expectation
 			expect(response.status).toBe(422);
-			console.log(response.body.error)
 			expect(response.body.error).toBe("Expected format: { paletteName: <string>, catalog_id: <integer>, colors: <array of objects> }. You are missing a catalog_id property.");
 		});
 	});
