@@ -3,8 +3,8 @@
 By:
 [Matthew Malone](https://github.com/matthewdshepherd) & [Edwin Del Bosque](https://github.com/edwindelbosque)
 
-## [Colors By Picasso - Production Site](http://colorsbypicasso.herokuapp.com/)
-## [Colors By Picasso - Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
+## [Production Site](http://colorsbypicasso.herokuapp.com/)
+## [Front End on GitHub](https://github.com/edwindelbosque/picasso-fe)
 
 ## Table of Contents
 * [Schema](#Schema)
@@ -12,6 +12,7 @@ By:
 * GET Endpoints
 * POST Endpoints
 * DELETE Endpoints
+* PATCH Endpoints
 * [API's used](#API's-used)
 * [Project Management Board](#Project-Management-Board)
 
@@ -34,6 +35,7 @@ One Catalog has many Palettes.
 	}
   ```
 </details>
+<details>
   <summary>  Catalog's Info Object Examples  </summary>
 
   ```js
@@ -49,7 +51,7 @@ One Catalog has many Palettes.
 	}]
   ```
 </details>
-</details>
+<details>
   <summary>  Palette's Info Object Examples  </summary>
 
   ```js
@@ -67,6 +69,7 @@ One Catalog has many Palettes.
     }]
   ```
 </details>
+
 ## End Points
 <details>
   <summary> <code>GET</code> endpoints </summary>
@@ -219,13 +222,42 @@ Format of POST body:
 { error: Incorrect Password' }
 ```
 </details>
+<details>
+  <summary> <code>DELETE</code> endpoints </summary>
 
 ##### 1. DELETE A Specific Palette
 DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
-- this only requires the id of the Palette you want to delete
+- This only requires the id of the Palette you want to delete
 - Sample Response (ok) status: 201 with message
 ```js
 `Palette <catalogId> was successfully removed`
+```
+##### 2. DELETE A Specific Catalog and Palettes it holds
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId'
+- This only requires the id of the Catalog you want to delete
+- Sample Response (ok) status: 201 with message
+```js
+`Catalog <catalogId> was successfully removed`
+```
+</details>
+<details>
+  <summary> <code>PATCH</code> endpoints </summary>
+
+##### 1. PATCH A Specific Palette
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId/palettes/:paletteId'
+- This requires the id of the Palette you want to patch
+- Body needs to hold the part of the Palette to update
+- Sample Response (ok) status: 20 with new name
+```js
+{newName: <name of palette>}
+```
+##### 2. PATCH A Specific Catalog
+DELETE path:'/api/v1/users/:userId/catalogs/:catalogId'
+- This only requires the id of the Catalog you want to patch
+- Body needs to hold the part of the Catalog to update
+- Sample Response (ok) status: 201 with message
+```js
+{newName: <name of catalog>}
 ```
 </details>
 
